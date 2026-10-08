@@ -1,6 +1,5 @@
 --------------------------------------------------------------------
--- Runs ONCE per realm. Never re-run: re-including hook.lua would
--- recreate its event storage and wipe all registered hooks.
+-- Include each library once per realm, including during auto-refresh.
 --------------------------------------------------------------------
 
 local FILES = {
@@ -17,6 +16,8 @@ end
 local t0 = SysTime()
 local failed = 0
 local pre_existing = hook.GetTable()
+_G.GLibusLoadedFiles = _G.GLibusLoadedFiles or {}
+local loaded = _G.GLibusLoadedFiles
 
 for i = 1, #FILES do
     local path = FILES[i]
@@ -27,13 +28,15 @@ for i = 1, #FILES do
     else
         if SERVER then AddCSLuaFile(path) end
 
-        local ok, err = pcall(include, path)
+        local ok, err = true, nil
+        local first_load = not loaded[path]
+        if first_load then ok, err = pcall(include, path) end
         if not ok then
             failed = failed + 1
             log("[FAIL] %s: %s", path, tostring(err))
         end
 
-        if path == "glibus/hook.lua" and ok then
+        if path == "libs/hook.lua" and ok and first_load then
             local migrated = 0
             for event, hooks in pairs(pre_existing) do
                 for name, fn in pairs(hooks) do
@@ -45,6 +48,7 @@ for i = 1, #FILES do
                 log("migrated %d pre-existing hooks", migrated)
             end
         end
+        if ok then loaded[path] = true end
     end
 end
 

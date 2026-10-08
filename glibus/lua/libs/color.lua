@@ -13,7 +13,7 @@ function Color(r, g, b, a)
     r = tonumber(r)
     g = tonumber(g)
     b = tonumber(b)
-    a = a == nil and 255 or tonumber(a)
+    a = tonumber(a or 255)
     return setmetatable({
         r = r > 255 and 255 or r,
         g = g > 255 and 255 or g,
@@ -24,7 +24,7 @@ end
 
 function ColorAlpha(c, a)
     local r, g, b = tonumber(c.r), tonumber(c.g), tonumber(c.b)
-    a = a == nil and 255 or tonumber(a)
+    a = tonumber(a or 255)
     return setmetatable({
         r = r > 255 and 255 or r,
         g = g > 255 and 255 or g,
