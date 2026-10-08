@@ -1,7 +1,7 @@
 -- Real GLua microbenchmarks; all library writes stay in private environments.
 if _G.FastPathBenchmarkRunning then return end
 local realm = SERVER and "server" or "client"
-local root = "addons/garrysmod-fastpath/glibus/lua/"
+local root = "addons/garrysmod-fastpath/fastpath/lua/"
 local clock, sort = SysTime, table.sort
 local function copy(t)
     local out = {}
